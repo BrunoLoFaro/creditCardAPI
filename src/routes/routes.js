@@ -1,6 +1,47 @@
 import {Router} from "express"
+import mongoose from "mongoose"
+import dotenv from 'dotenv';
+import path from 'path'
+let __dirname = path.resolve();
+dotenv.config({path:__dirname+'/config/.env'})
+mongoose.connect(
+    process.env.MONGODB_URI, 
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }
+);
+mongoose.connection.on('open', function (ref) {
+    console.log('Connected to mongo server.');
+})
+const cardSchema = new mongoose.Schema({ Id: String, validFrom: Date, validTo: Date, holder: String, code: String});
+
+const clientSchema = new mongoose.Schema({
+    Card: cardSchema,
+    Limit: Number
+});
+
+const Client = mongoose.model('Clients', clientSchema, 'clients');
+
 export const cardsRouter = Router()
+
 cardsRouter
-.get('/', (req,res,next)=>{
-    res.json({val:"ok"});    
+.post('/', (req,res,next)=>{
+    Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
+        if (err) {
+            console.log(err);
+            res.send("Some error occured!")
+        }
+
+        if(!found)
+            res.json({error:'Card not found'});
+
+        let price = parseInt(req.body.Price);
+        let cardLimit = found.Limit;
+        if(price>cardLimit)
+            res.json({error:'Exceeded card limit'});
+            
+        else
+            res.sendStatus(200);
+    })
 })
