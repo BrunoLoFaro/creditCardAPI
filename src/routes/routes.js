@@ -32,16 +32,17 @@ cardsRouter
             console.log(err);
             res.send("Some error occured!")
         }
-
-        if(!found)
-            res.json({error:'Card not found'});
-
+        if(found == null){
+            res.json({valid: false, error:'Card not found'});
+            return;
+        }
         let price = parseInt(req.body.Price);
         let cardLimit = found.Limit;
         if(price>cardLimit)
-            res.json({error:'Exceeded card limit'});
+            res.json({valid: false, error:'Card limit exceeded.'});
             
         else
-            res.sendStatus(200);
-    })
+            res.json({valid: true});
+        return;
+    });
 })
