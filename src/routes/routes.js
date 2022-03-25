@@ -26,7 +26,8 @@ const Client = mongoose.model('Clients', clientSchema, 'clients');
 export const cardsRouter = Router()
 
 cardsRouter
-.post('/', (req,res,next)=>{
+.post('', (req,res,next)=>{
+    console.log("hi");
     Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
         if (err) {
             console.log(err);
@@ -46,3 +47,43 @@ cardsRouter
         return;
     });
 })
+.get('', (req,res,next)=>{
+    console.log("hi");
+    console.log(req.body)
+    Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
+        if (err) {
+            console.log(err);
+            res.send("Some error occured!")
+        }
+        if(found == null){
+            res.json({valid: false, error:'Card not found'});
+            return;
+        }
+        let price = parseInt(req.body.Price);
+        let cardLimit = found.Limit;
+
+        if(price>cardLimit)
+            res.json({valid: false, error:'Card limit exceeded.'});
+            
+        else{
+            found.Limit -= req.body.Price;
+            found.save();
+            res.json({valid: true, error:''});
+        }
+        return;
+    });
+})
+.get('/first', async function(req,res,next){
+    console.log("First");
+    await sleep(5000)
+    res.json({value: 'first'});
+})
+.get('/second', (req,res,next)=>{
+    console.log("Second");
+    res.json({value: 'second'});
+})
+function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
