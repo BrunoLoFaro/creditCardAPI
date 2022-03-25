@@ -76,11 +76,11 @@ cardsRouter
 .get('/first', async function(req,res,next){
     console.log("First");
     await sleep(5000)
-    res.json({value: 'first'});
+    res.json({valid: true, error:''});
 })
 .get('/second', (req,res,next)=>{
     console.log("Second");
-    res.json({value: 'second'});
+    res.json({valid: true, error:''});
 })
 function sleep(ms) {
     return new Promise((resolve) => {
