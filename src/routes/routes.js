@@ -26,7 +26,7 @@ const Client = mongoose.model('Clients', clientSchema, 'clients');
 export const cardsRouter = Router()
 
 cardsRouter
-.get('', (req,res,next)=>{
+.post('/validation', (req,res,next)=>{
     Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
         if (err) {
             console.log(err);
@@ -48,7 +48,7 @@ cardsRouter
         return;
     });
 })
-.post('', (req,res,next)=>{
+.post('/payment', (req,res,next)=>{
     Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
         if (err) {
             console.log(err);
