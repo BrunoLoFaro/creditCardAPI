@@ -26,8 +26,7 @@ const Client = mongoose.model('Clients', clientSchema, 'clients');
 export const cardsRouter = Router()
 
 cardsRouter
-.post('', (req,res,next)=>{
-    console.log("hi");
+.get('', (req,res,next)=>{
     Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
         if (err) {
             console.log(err);
@@ -39,17 +38,17 @@ cardsRouter
         }
         let price = parseInt(req.body.Price);
         let cardLimit = found.Limit;
+
         if(price>cardLimit)
             res.json({valid: false, error:'Card limit exceeded.'});
             
-        else
-            res.json({valid: true});
+        else{
+            res.json({valid: true, error:''});
+        }
         return;
     });
 })
-.get('', (req,res,next)=>{
-    console.log("hi");
-    console.log(req.body)
+.post('', (req,res,next)=>{
     Client.findOne({'Card.Id': req.body.Id}, (err, found) => {
         if (err) {
             console.log(err);
@@ -73,17 +72,3 @@ cardsRouter
         return;
     });
 })
-.get('/first', async function(req,res,next){
-    console.log("First");
-    await sleep(5000)
-    res.json({valid: true, error:''});
-})
-.get('/second', (req,res,next)=>{
-    console.log("Second");
-    res.json({valid: true, error:''});
-})
-function sleep(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
